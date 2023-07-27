@@ -1,41 +1,31 @@
 package br.com.restassured.tests;
 
 import br.com.restassured.data.Login;
+import br.com.restassured.requests.LoginRequests;
+import br.com.restassured.setup.RequestSpecificationSetup;
 import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
+import io.restassured.response.Response;
 import org.junit.Test;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 public class LoginTests {
+
+
+    RequestSpecificationSetup spec = new RequestSpecificationSetup();
+    Response response;
+    LoginRequests loginRequests = new LoginRequests();
     @Test
     public void postLoginSuccess(){
-        String endpoint = "http://localhost:3000/login";
-        Login requestBody = new Login("fulano@qa.com", "teste");
-        RestAssured.given()
-                .contentType(ContentType.JSON)
-                .body(requestBody)
-                .when()
-                .post(endpoint)
-                .then()
-                .statusCode(200)
-                .body("message",equalTo("Login realizado com sucesso"))
-                .log().all();
+      response = loginRequests.postLogin("fulano@qa.com", "teste");
+      assertThat(response.statusCode(),equalTo(200));
+      assertThat(response.getBody().jsonPath().get("message"),equalTo("Login realizado com sucesso"));
     }
       @Test
     public void postLoginPasswordBlank(){
-        String endpoint = "http://localhost:3000/login";
-        Login requestBody = new Login("fulano@qa.com", "teste");
-        requestBody.setPassword("");
-        RestAssured.given()
-                .contentType(ContentType.JSON)
-                .body(requestBody)
-                .when()
-                .post(endpoint)
-                .then()
-                .statusCode(400)
-                .body("password",equalTo("password não pode ficar em branco"))
-                .log().all();
+          response = loginRequests.postLogin("fulano@qa.com", "");
+          assertThat(response.statusCode(),equalTo(400));
+          assertThat(response.getBody().jsonPath().get("password"),equalTo("password não pode ficar em branco"));
     }
 
 
