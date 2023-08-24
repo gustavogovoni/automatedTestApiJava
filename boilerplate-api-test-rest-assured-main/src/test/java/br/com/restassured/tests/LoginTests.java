@@ -11,8 +11,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 public class LoginTests {
 
-
-    RequestSpecificationSetup spec = new RequestSpecificationSetup();
     Response response;
     LoginRequests loginRequests = new LoginRequests();
     @Test
